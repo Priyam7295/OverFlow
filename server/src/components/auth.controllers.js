@@ -1,6 +1,11 @@
 import { User } from "../models/user.models.js";
 import bcrypt from "bcrypt";
 import generateToken from "../utils/createjwttoken.js";
+import cloudinary from "../utils/cloudinary.js";
+
+import fs from 'fs';
+
+
 
 const signupFunction = async (req, res) => {
     try {
@@ -123,4 +128,48 @@ const logoutFunction = async (req, res) => {
 };
 
 
-export { loginFunction, logoutFunction, signupFunction };
+
+const uploadDp = async (req, res) => {
+    try {
+        console.log(req.file);
+
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No image uploaded',
+            });
+        }
+
+        const localFilePath = req.file.path;
+
+
+        const result = await cloudinary.uploader.upload(localFilePath, {
+            folder: 'profile_dps',
+        });
+
+
+        fs.unlink(localFilePath, (err) => {
+            if (err) {
+                console.error('Error deleting local file:', err);
+            } else {
+                console.log('Local file deleted:', localFilePath);
+            }
+        });
+
+
+        return res.status(200).json({
+            success: true,
+            message: 'DP uploaded to Cloudinary successfully',
+            cloudinaryUrl: result.secure_url,
+            publicId: result.public_id,
+        });
+    } catch (err) {
+        console.error('Cloudinary Upload Error:', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+
+export { loginFunction, logoutFunction, signupFunction, uploadDp };
