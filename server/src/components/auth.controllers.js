@@ -9,7 +9,7 @@ import fs from 'fs';
 
 const signupFunction = async (req, res) => {
     try {
-        const { username, email, fullname, dp, password } = req.body;
+        const { username, email, fullname, password } = req.body;
         if (!username || !email || !fullname || !password) {
             return res.status(400).json({ message: "Missing required fields" });
         }
@@ -35,7 +35,6 @@ const signupFunction = async (req, res) => {
             username,
             email,
             fullname,
-            dp,
             password: hashedPassword
         })
         const token = generateToken(newUser._id);
