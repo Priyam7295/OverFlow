@@ -29,8 +29,7 @@ const userSchema = new Schema(
             index: true
         },
         dp: {
-            type: String,
-            required: true
+            type: String
         },
         password: {
             type: String,
